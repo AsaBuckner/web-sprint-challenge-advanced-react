@@ -1,19 +1,14 @@
 // Write your tests here
-
-// { "x": 1, "y": 2, 
-// "steps": 3, "email": 
-// "lady@gaga.com" }
-
-// - `x` should be an integer 
-// between 1 and 3.
-// - `y` should be an integer 
-// between 1 and 3.
-// - `steps` should be an integer 
-// larger than 0.
-// - `email` should be a valid 
-// email address.
+import React from "react"
+import * as rtl from "react-testing-library"
+import 'jest-dom/extend-expect'
+import AppFunctional from "./AppFunctional"
+import AppClass from "./AppClass"
 
 
+it('' , () => {
+  
+})
 
 test('sanity', () => {
   expect(true).toBe(false)

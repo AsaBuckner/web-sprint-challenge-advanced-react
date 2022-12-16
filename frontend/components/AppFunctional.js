@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect} from 'react'
-
+import axios from 'axios'
 
 // Suggested initial states
 const initialMessage = ''
@@ -77,10 +77,6 @@ export default function AppFunctional(props) {
       setMessage("You can't go down")
     }
   }
-  
-
-
-
 
   function onClickRight() {
     if(coordinates[0] !== "3"){
@@ -94,24 +90,46 @@ export default function AppFunctional(props) {
     }
   }
 
-  function getNextIndex(direction) {
-    // This helper takes a direction ("left", "up", etc) and calculates what the next index
-    // of the "B" would be. If the move is impossible because we are at the edge of the grid,
-    // this helper should return the current index unchanged.
+  function onClickLeft() {
+    if(activeSquare % 3 !== 0){
+      setActiveSquare(activeSquare - 1)
+      setCoordinates(coordinatesArray[activeSquare - 1]) 
+      setNumOfMoves(numOfMoves + 1)
+      setMessage(initialMessage)
+    }else{  
+      setMessage("You can't go left") 
+    }
   }
-
-  function move(evt) {
-    // This event handler can use the helper above to obtain a new index for the "B",
-    // and change any states accordingly.
-  }
-
+  
   function onChange(evt) {
     // You will need this to update the value of the input.
+      setEmail(evt.target.value)
   }
 
-  function onSubmit(evt) {
-    // Use a POST request to send a payload to the server.
+  function retrieveName() {
+    let name = ""
+    for (let i = 0; i < email.length; i++){
+        if(email[i] === "@"){
+          console.log(name)
+          return(name)
+        }else{name += email[i]}
+    }
   }
+
+  function onSubmit(evt){
+    evt.preventDefault()
+    axios.post('http://localhost:9000/api/result', {
+       "x": coordinates[0], "y": coordinates[2], "steps": numOfMoves, "email": email }
+    )
+    setMessage(`${retrieveName()} win #145`)
+    setEmail(initialEmail) 
+  }
+    
+
+
+
+
+
 
   return (
     <div id="wrapper" className={props.className}>
@@ -119,28 +137,43 @@ export default function AppFunctional(props) {
         <h3 id="coordinates">Coordinates {coordinates}</h3>
         <h3 id="steps">You moved {numOfMoves} times</h3>
       </div>
+
       <div id="grid">
         {
+          ////////////////////////////////////////////////////////
           [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-            <div key={idx} className={`square${idx === {activeSquare} ? ' active' : ''}`}>
-              {idx === {activeSquare} ? 'B' : null}
+            <div key={idx} className={`square ${idx == {activeSquare} ? ' active' : ''}`}>
+              {idx == {activeSquare} ? 'B' : null}
             </div>
           ))
+          ////////////////////////////////////////////////////////
         }
       </div>
+
       <div className="info">
         <h3 id="message">{message}</h3>
       </div>
+
       <div id="keypad">
-        <button id="left">LEFT</button>
+        <button onClick={onClickLeft} id="left">LEFT</button>
         <button onClick={onClickUp} id="up">UP</button>
-        <button onClick={onClickRight}id="right">RIGHT</button>
-        <button onClick={onClickDown}id="down">DOWN</button>
+        <button onClick={onClickRight} id="right">RIGHT</button>
+        <button onClick={onClickDown} id="down">DOWN</button>
         <button onClick={reset} id="reset">reset</button>
       </div>
       <form>
-        <input id="email" type="email" placeholder="type email"></input>
-        <input id="submit" type="submit"></input>
+
+        <input onChange={onChange}
+        value = {email}
+        id="email" 
+        type="email" 
+        placeholder="type email"/>
+
+        <input 
+        id="submit" 
+        onClick={onSubmit}
+        type="submit"/>
+
       </form>
     </div>
   )

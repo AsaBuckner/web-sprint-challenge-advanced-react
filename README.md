@@ -38,7 +38,7 @@ Study its functionality and also inspect the Console, the Network tab and the El
 - The endpoint expects a payload like `{ "x": 1, "y": 2, "steps": 3, "email": "lady@gaga.com" }`:
   - `x` should be an integer between 1 and 3.
   - `y` should be an integer between 1 and 3.
-  - `steps` should be an integer larger than 0.
+  - `steps` should be an inpm ru tnteger larger than 0.
   - `email` should be a valid email address.
 - Expect an "Unprocessable Entity" server response if the payload has the wrong shape.
 

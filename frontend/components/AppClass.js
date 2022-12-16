@@ -33,14 +33,14 @@ export default class AppClass extends React.Component {
       email: initialEmail,
       coordinates: initialCoordinates
     }
+    
   }
   // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
   // You can delete them and build your own logic from scratch.
 
-  getXY = () => {
-
+  componentDidMount = () => {
+    
   }
-
 
   reset = () => {
     this.setState({
@@ -105,7 +105,6 @@ export default class AppClass extends React.Component {
         message: "You can't go right"
       })
     }
-    console.log(this.state.coordinates[0])
   }
 
   onCLickLeft = () => {
@@ -125,6 +124,9 @@ export default class AppClass extends React.Component {
     })}
   }
 
+  
+
+
   onChange = (evt) => {
     // You will need this to update the value of the input.
     this.setState({
@@ -133,30 +135,27 @@ export default class AppClass extends React.Component {
     })
   }
 
-  retrieveName = () => {
-    let name = ""
-    for (let i = 0; i < this.state.email.length; i++){
-        if(this.state.email[i] === "@"){
-          console.log(name)
-          return(name)
-        }else{name += this.state.email[i]}
-    }
-  }
 
+///////////////////////
   onSubmit = (evt) => {
     
     evt.preventDefault()
 
     axios.post('http://localhost:9000/api/result', {
-       "x": this.state.coordinates[0], "y": this.state.coordinates[2], "steps": this.state.numOfMoves, "email": this.state.email }
+       x: this.state.coordinates[0], y: this.state.coordinates[2], steps: this.state.numOfMoves, email: this.state.email 
+      }
     )
-
-    this.setState({
-      ...this.state, message: `${this.retrieveName()} win #145`,
+    .then(res => 
+      this.setState({
+      ...this.state, 
+      message:res.data.message,
       email: initialEmail
-    })
-    
+      }))
+      
+      
   }
+/////////////////////////
+
 
   render() {
     const { className } = this.props
@@ -178,9 +177,14 @@ export default class AppClass extends React.Component {
               )
           }
         </div>
+
+       
         <div className="info">
           <h3 id="message">{this.state.message}</h3>
         </div>
+
+
+
         <div id="keypad">
           <button id="left" onClick={this.onCLickLeft}>LEFT</button>
           <button id="up" onClick={this.onCLickUp}>UP</button>
