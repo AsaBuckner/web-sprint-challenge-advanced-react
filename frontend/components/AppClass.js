@@ -27,7 +27,7 @@ export default class AppClass extends React.Component {
     super()
     this.state = {
       activeSquare: initialIndex,
-      numOfMoves: initialSteps,
+      steps: initialSteps,
       screenName: initialName,
       message : initialMessage,
       email: initialEmail,
@@ -48,7 +48,7 @@ export default class AppClass extends React.Component {
       screenName: initialName,
       email: initialEmail,
       activeSquare: initialIndex,
-      numOfMoves: initialSteps,
+      steps: initialSteps,
       coordinates: initialCoordinates
     })
     // Use this helper to reset all states to their initial values.d
@@ -61,7 +61,7 @@ export default class AppClass extends React.Component {
       ...this.state,activeSquare: (
         this.state.activeSquare - 3)
      ,coordinates: coordinatesArray[this.state.activeSquare - 3]
-     ,numOfMoves: this.state.numOfMoves + 1
+     ,steps: this.state.steps + 1
      ,message: initialMessage})
       } else {
         this.setState({
@@ -77,7 +77,7 @@ export default class AppClass extends React.Component {
       ...this.state
         ,activeSquare: (this.state.activeSquare + 3)
         ,coordinates: coordinatesArray[this.state.activeSquare + 3]
-        ,numOfMoves: this.state.numOfMoves + 1
+        ,steps: this.state.steps + 1
         ,message: initialMessage
       })}
       else{
@@ -96,7 +96,7 @@ export default class AppClass extends React.Component {
         this.state.activeSquare + 1
       )
       ,coordinates: coordinatesArray[this.state.activeSquare + 1]
-      ,numOfMoves: this.state.numOfMoves + 1
+      ,steps: this.state.steps + 1
       ,message: initialMessage
     })}
     else{
@@ -114,7 +114,7 @@ export default class AppClass extends React.Component {
           this.state.activeSquare - 1
         )
         ,coordinates: coordinatesArray[this.state.activeSquare - 1]
-        ,numOfMoves: this.state.numOfMoves + 1
+        ,steps: this.state.steps + 1
         ,message: initialMessage
       })
     }else{ 
@@ -141,19 +141,41 @@ export default class AppClass extends React.Component {
     
     evt.preventDefault()
 
+    if(this.state.email !== 'foo@bar.baz'){
     axios.post('http://localhost:9000/api/result', {
-       x: this.state.coordinates[0], y: this.state.coordinates[2], steps: this.state.numOfMoves, email: this.state.email 
+       x: this.state.coordinates[0], y: this.state.coordinates[2], steps: this.state.steps, email: this.state.email 
       }
     )
-    .then(res => 
+    .then(res => {
+      
       this.setState({
       ...this.state, 
-      message:res.data.message,
-      email: initialEmail
-      }))
+      message: res.data.message,
+      
+      })}).catch(error => {
+        if(error.response.status === 422){
+          setMessage(res.data.message)
+          reset()
+        }
+        if(error.response.status === 500){
+          setMessage("Server Error")
+          reset()
+        }
+        if(error.response.status === 403){
+          setMessage("Forbidden")
+          reset()
+        }
+
+    }else if (this.state.email === 'foo@bar.baz'){
+      this.setState({
+        ...this.state, 
+        message: 'foo@bar.baz failure #71'
+    })}
+}
+
       
       
-  }
+  
 /////////////////////////
 
 
@@ -162,8 +184,8 @@ export default class AppClass extends React.Component {
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-        <h3 id="coordinates">Cordinates {this.state.coordinates}</h3>
-          <h3 id="steps">You moved {this.state.numOfMoves} times</h3>
+        <h3 id="coordinates">Coordinates {this.state.coordinates}</h3>
+          <h3 id="steps">You moved {this.state.steps} times</h3>
         </div>
         <div id="grid">
           {
