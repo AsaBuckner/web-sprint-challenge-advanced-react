@@ -135,44 +135,42 @@ export default class AppClass extends React.Component {
     })
   }
 
-
-///////////////////////
   onSubmit = (evt) => {
     
-    evt.preventDefault()
+    evt.preventDefault();
 
-    if(this.state.email !== 'foo@bar.baz'){
     axios.post('http://localhost:9000/api/result', {
        x: this.state.coordinates[0], y: this.state.coordinates[2], steps: this.state.steps, email: this.state.email 
-      }
-    )
-    .then(res => {
+    })
+      .then(res => {
+        
+        this.setState({
+        ...this.state, 
+        message: res.data.message,
+        email: initialEmail,
+        
+        
+        })
+      })
       
-      this.setState({
-      ...this.state, 
-      message: res.data.message,
-      
-      })}).catch(error => {
+      .catch(error => {
         if(error.response.status === 422){
-          setMessage(res.data.message)
-          reset()
+          this.setState({
+            ...this.state, 
+            message: error.response.data.message})
         }
         if(error.response.status === 500){
-          setMessage("Server Error")
-          reset()
+          this.setState({
+            ...this.state, 
+            message: error.response.data.message})
         }
         if(error.response.status === 403){
-          setMessage("Forbidden")
-          reset()
+          this.setState({
+            ...this.state, 
+            message: error.response.data.message})
         }
-
-    }else if (this.state.email === 'foo@bar.baz'){
-      this.setState({
-        ...this.state, 
-        message: 'foo@bar.baz failure #71'
-    })}
-}
-
+      }
+  )}
       
       
   
@@ -184,8 +182,8 @@ export default class AppClass extends React.Component {
     return (
       <div id="wrapper" className={className}>
         <div className="info">
-        <h3 id="coordinates">Coordinates {this.state.coordinates}</h3>
-          <h3 id="steps">You moved {this.state.steps} times</h3>
+        <h3 id="coordinates">Coordinates ({this.state.coordinates})</h3>
+          <h3 id="steps">{this.state.steps === 1 ? `You moved ${this.state.steps} time`: `You moved ${this.state.steps} times`}</h3>
         </div>
         <div id="grid">
           {

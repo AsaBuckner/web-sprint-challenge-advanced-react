@@ -8,10 +8,10 @@
   const initialEmail = ''
   const initialSteps = 0
   const initialIndex = 4 // the index the "B" is at
-  const initialCoordinates = "2,2"
+  const initialCoordinates = "(2,2)"
   const initialName = ""
   const array = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-  const coordinatesArray = [  "1,1",  "2,1",  "3,1",  "1,2",  "2,2",  "3,2",  "1,3",  "2,3",  "3,3"]
+  const coordinatesArray = [  "(1,1)",  "(2,1)",  "(3,1)",  "(1,2)",  "(2,2)",  "(3,2)",  "(1,3)",  "(2,3)",  "(3,3)"]
   
   export default function AppFunctional(props) {
     
@@ -59,14 +59,14 @@
     }
 
     function onClickRight() {
-      if(coordinates[0] !== "3"){
+      if(coordinates[1] !== "3"){
         setActiveSquare(activeSquare + 1)
         setCoordinates(coordinatesArray[activeSquare + 1])
         setSteps(steps + 1)
         setMessage(initialMessage)
       }
       else{
-        setMessage("You can't go Right")
+        setMessage("You can't go right")
       }
     }
   
@@ -90,14 +90,13 @@
       evt.preventDefault()
 
       axios.post('http://localhost:9000/api/result', {
-        "x": coordinates[0],
-        "y": coordinates[2],
+        "x": coordinates[1],
+        "y": coordinates[3],
         "steps": steps,
         "email": email
       }).then(res => {
-        reset(),
         setMessage(res.data.message)
-        
+        setEmail(initialEmail)
       })
       .catch(error => {
         if(error.response.status === 422){
@@ -128,7 +127,8 @@
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">Coordinates {coordinates}</h3>
-        <h3 id="steps">You moved {steps} times</h3>
+        <h3 id="steps">
+          {steps === 1 ? `You moved ${steps} time`: `You moved ${steps} times`}</h3>
       </div>
 
       <div id="grid">
