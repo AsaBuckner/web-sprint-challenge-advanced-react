@@ -1,16 +1,16 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render} from '@testing-library/react';
 import AppFunctional from './AppFunctional';
 
 describe('AppFunctional', () => {
   it('should show the active square on mount', () => {
     // Arrange
-    const wrapper = shallow(<AppFunctional />);
+    const { getByText } = render(<AppFunctional />);
 
     // Act
-    wrapper.instance().componentDidMount();
+    // No action is needed here, as the active square should be shown on mount
 
     // Assert
-    expect(wrapper.find('.square.active').length).toEqual(1);
+    expect(getByText('B').classList.contains('active')).toBeTruthy();
   });
 });
